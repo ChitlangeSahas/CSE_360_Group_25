@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <BarChart title="Data Histogram">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </BarChart>
+       <VBox>
+           <opaqueInsets>
+               <Insets />
+           </opaqueInsets>
+           <HBox.margin>
+               <Insets bottom="10.0" left="10.0" top="10.0" />
+           </HBox.margin>
+           <Label text="Mean">
+            <font>
+               <Font name="Calibri Light" size="14.0" />
+            </font></Label>
+           <Label text="Median" >
+               <font>
+                   <Font name="Calibri Light" size="14.0" />
+               </font>
+           </Label>
+           <Label text="Mode" >
+               <font>
+                   <Font name="Calibri Light" size="14.0" />
+               </font>
+           </Label>
+         <Separator prefWidth="50.0" />
+           <Label text="High" >
+               <font>
+                   <Font name="Calibri Light" size="14.0" />
+               </font>
+           </Label>
+           <Label text="Low" >
+               <font>
+               <Font name="Calibri Light" size="14.0" />
+           </font></Label>
+
+       </VBox>
+       <VBox>
+           <opaqueInsets>
+               <Insets />
+           </opaqueInsets>
+           <HBox.margin>
+               <Insets bottom="10.0" right="10.0" top="10.0" />
+           </HBox.margin>
+           <Label text="35.0" >
+               <font>
+           <Font name="Calibri Light" size="14.0" />
+           </font></Label>
+           <Label text="69" >
+               <font>
+                   <Font name="Calibri Light" size="14.0" />
+               </font></Label>
+           <Label text="23" >
+               <font>
+                   <Font name="Calibri Light" size="14.0" />
+               </font></Label>
+           <Separator prefWidth="50.0" />
+           <Label text="36" >
+               <font>
+               <Font name="Calibri Light" size="14.0" />
+           </font></Label>
+           <Label text="20" >
+               <font>
+                   <Font name="Calibri Light" size="14.0" />
+               </font></Label>
+       </VBox>
+   </children>
+</HBox>
