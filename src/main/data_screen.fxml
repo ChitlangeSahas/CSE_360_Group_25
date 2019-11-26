@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.effect.Blend?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -16,6 +17,7 @@
       <ToolBar prefHeight="40.0" prefWidth="200.0">
         <items>
           <Button mnemonicParsing="false" text="Settings" />
+            <Button mnemonicParsing="false" text="Append" />
         </items>
       </ToolBar>
       <TableView editable="true" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true" translateZ="2.0">
@@ -44,6 +46,17 @@
          <children>
             <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
                <children>
+                  <Button alignment="CENTER_RIGHT" cancelButton="true" mnemonicParsing="false" text="Delete Cell">
+                     <HBox.margin>
+                        <Insets right="420.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font name="Calibri Light" size="13.0" />
+                     </font>
+                     <effect>
+                        <Blend />
+                     </effect>
+                  </Button>
                   <Button mnemonicParsing="false" text="Analyze &gt;">
                      <font>
                         <Font name="Calibri Light" size="13.0" />
