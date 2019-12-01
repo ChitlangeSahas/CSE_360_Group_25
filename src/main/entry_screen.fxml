@@ -11,7 +11,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <Pane xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
    <children>
       <VBox alignment="BOTTOM_CENTER">
@@ -51,12 +50,12 @@
               <Insets bottom="1.0" left="1.0" right="1.0" top="10.0" />
               </GridPane.margin>
           </Label>
-         <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+         <ImageView fx:id="enter_manually_img" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
             <image>
                <Image url="@../res/icons/icons8-keyboard-100.png" />
             </image>
          </ImageView>
-            <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+            <ImageView fx:id="settings_img" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2">
                <image>
                   <Image url="@../res/icons/icons8-settings-100.png" />
                </image>
@@ -67,7 +66,7 @@
                </font>
             </Label>
       
-          <ImageView fx:id="load_file_btn" fitHeight="100.0" fitWidth="100.0" onMouseClicked="#open_file_chooser" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+          <ImageView fx:id="add_file_img" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
               <image>
                   <Image url="@../res/icons/icons8-add-100.png" />
               </image>
