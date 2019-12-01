@@ -1,24 +1,31 @@
 package main;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToolBar;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main extends Application {
-    Scene prev_scene;
+    private Scene prev_scene;
+    private ArrayList<String> data = new ArrayList<>();
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
 
         // entry screen
         FXMLLoader entry_screen_loader = new FXMLLoader();
@@ -39,7 +46,7 @@ public class Main extends Application {
         data_screen_loader.setLocation(getClass().getResource("data_screen.fxml"));
         Parent data_screen_root = (Parent) data_screen_loader.load();
         primaryStage.setTitle("Grade Analytics Tool");
-        Scene data_screen_scene = new Scene(data_screen_root, 600, 352);
+        Scene data_screen_scene = new Scene(data_screen_root, 625, 352);
 
         // analysis screen
         FXMLLoader analysis_screen_loader = new FXMLLoader();
@@ -51,7 +58,7 @@ public class Main extends Application {
         // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-ENTRY SCREEN HANDLERS-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
         // handler for when enter manually image is clicked
         ImageView enter_manually_img = (ImageView) entry_screen_scene.lookup("#enter_manually_img");
-        enter_manually_img.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+        enter_manually_img.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 primaryStage.setScene(data_screen_scene);
@@ -62,7 +69,7 @@ public class Main extends Application {
 
         // handler for when add file image is clicked
         ImageView add_file_img = (ImageView) entry_screen_scene.lookup("#add_file_img");
-        add_file_img.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+        add_file_img.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 // prompt for file
@@ -72,13 +79,43 @@ public class Main extends Application {
                         , new FileChooser.ExtensionFilter("CSV Files", "*.csv")
                 );
                 File selectedFile = fileChooser.showOpenDialog(new Stage());
+
+                FileUtils fileUtils = new FileUtils();
+                try {
+                    // clear the data and add new.
+                    data.clear();
+                    data = fileUtils.file_to_tokens(selectedFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(data.size());
+
+
+                TableView<String> table = (TableView<String>) data_screen_scene.lookup("#table_tb");
+
+                TableColumn columnOne = new TableColumn("C1");
+                TableColumn columnTwo = new TableColumn("C2");
+                TableColumn columnThree = new TableColumn("C3");
+                TableColumn columnFour = new TableColumn("C4");
+
+                table.getColumns().addAll(columnOne, columnTwo, columnThree, columnFour);
+
+                columnOne.setCellValueFactory(c -> new SimpleStringProperty(data.get(0)));
+                columnTwo.setCellValueFactory(c -> new SimpleStringProperty(data.get(1)));
+                columnThree.setCellValueFactory(c -> new SimpleStringProperty(data.get(2)));
+                columnFour.setCellValueFactory(c -> new SimpleStringProperty(data.get(3)));
+
+                table.getItems().addAll(data);
+
                 prev_scene = entry_screen_scene;
+                primaryStage.setScene(data_screen_scene);
+                primaryStage.show();
             }
         });
 
         // handler for when settings image is clicked
         ImageView settings_img = (ImageView) entry_screen_scene.lookup("#settings_img");
-        settings_img.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+        settings_img.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 // show settings screen
@@ -96,7 +133,7 @@ public class Main extends Application {
 
         // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-SETTINGS SCREEN HANDLERS-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
         Button apply_btn = (Button) settings_screen_scene.lookup("#apply_settings_btn");
-        apply_btn.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+        apply_btn.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 TextField left_boundary_tf = (TextField) settings_screen_scene.lookup("#grade_left_boundary");
@@ -105,12 +142,9 @@ public class Main extends Application {
                 Settings.GRADE_LEFT_BOUNDARY = Integer.parseInt(left_boundary_tf.getText());
                 Settings.GRADE_RIGHT_BOUNDARY = Integer.parseInt(right_boundary_tf.getText());
 
-                if (prev_scene == entry_screen_scene)
-                {
+                if (prev_scene == entry_screen_scene) {
                     primaryStage.setScene(entry_screen_scene);
-                }
-                else if (prev_scene == data_screen_scene)
-                {
+                } else if (prev_scene == data_screen_scene) {
                     primaryStage.setScene(data_screen_scene);
                 }
                 primaryStage.show();
@@ -119,7 +153,7 @@ public class Main extends Application {
 
 
         // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-DATA SCREEN HANDLERS-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
-        Button data_scr_settings_btn = (Button) ((ToolBar)data_screen_scene.lookup("#upper_toolbar")).getItems().get(0);
+        Button data_scr_settings_btn = (Button) ((ToolBar) data_screen_scene.lookup("#upper_toolbar")).getItems().get(0);
         data_scr_settings_btn.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -134,7 +168,7 @@ public class Main extends Application {
                 primaryStage.show();
             }
         });
-        Button data_screen_append_btn = (Button) ((ToolBar)data_screen_scene.lookup("#upper_toolbar")).getItems().get(1);
+        Button data_screen_append_btn = (Button) ((ToolBar) data_screen_scene.lookup("#upper_toolbar")).getItems().get(1);
         data_screen_append_btn.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -166,10 +200,5 @@ public class Main extends Application {
         });
         primaryStage.setScene(entry_screen_scene);
         primaryStage.show();
-    }
-
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }
