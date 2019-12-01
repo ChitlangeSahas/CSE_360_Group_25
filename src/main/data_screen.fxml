@@ -12,62 +12,58 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.layout.Pane?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="352.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
-   <children>
-      <ToolBar prefHeight="40.0" prefWidth="200.0">
-        <items>
-          <Button mnemonicParsing="false" text="Settings" />
-            <Button mnemonicParsing="false" text="Append" />
-        </items>
-      </ToolBar>
-      <TableView editable="true" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true" translateZ="2.0">
-        <columns>
+    <ToolBar fx:id="upper_toolbar" prefHeight="40.0" prefWidth="200.0">
+        <Button fx:id="settings" alignment="CENTER_RIGHT" cancelButton="true" mnemonicParsing="false" text="Settings"/>
+        <Button fx:id="append_btn" mnemonicParsing="false" text="Append" />
+    </ToolBar>
+    <TableView editable="true" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true" translateZ="2.0">
+      <columns>
           <TableColumn prefWidth="75.0" text="C1" />
           <TableColumn prefWidth="75.0" text="C2" />
-            <TableColumn prefWidth="75.0" text="C3" />
-            <TableColumn prefWidth="75.0" text="C4" />
-        </columns>
-      </TableView>
-      <Separator prefWidth="200.0" />
-       <HBox alignment="TOP_RIGHT">
-           <TextField>
-            <font>
-               <Font name="Calibri Light" size="12.0" />
-            </font>
-            <HBox.margin>
-               <Insets right="20.0" top="20.0" />
-            </HBox.margin></TextField>
-           <Button mnemonicParsing="false" text="Add">
-            <HBox.margin>
-               <Insets right="20.0" top="20.0" />
-            </HBox.margin></Button>
-       </HBox>
-      <VBox>
-         <children>
-            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Button alignment="CENTER_RIGHT" cancelButton="true" mnemonicParsing="false" text="Delete Cell">
-                     <HBox.margin>
-                        <Insets right="420.0" />
-                     </HBox.margin>
-                     <font>
-                        <Font name="Calibri Light" size="13.0" />
-                     </font>
-                     <effect>
-                        <Blend />
-                     </effect>
-                  </Button>
-                  <Button mnemonicParsing="false" text="Analyze &gt;">
-                     <font>
-                        <Font name="Calibri Light" size="13.0" />
-                     </font>
-                  </Button>
-               </children>
-               <VBox.margin>
-                  <Insets right="20.0" />
-               </VBox.margin>
-            </HBox>
-         </children>
-      </VBox>
-   </children>
+          <TableColumn prefWidth="75.0" text="C3" />
+          <TableColumn prefWidth="75.0" text="C4" />
+      </columns>
+    </TableView>
+    <Separator prefWidth="200.0" />
+    <HBox alignment="TOP_RIGHT">
+        <TextField>
+         <font>
+             <Font name="Calibri Light" size="12.0" />
+         </font>
+         <HBox.margin>
+             <Insets right="20.0" top="20.0" />
+         </HBox.margin>
+        </TextField>
+        <Button mnemonicParsing="false" text="Add">
+         <HBox.margin>
+             <Insets right="20.0" top="20.0" />
+         </HBox.margin>
+        </Button>
+    </HBox>
+    <VBox>
+        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+            <VBox.margin>
+                <Insets right="20.0"/>
+            </VBox.margin>
+            <Button fx:id="delete_btn" alignment="CENTER_RIGHT" cancelButton="true" mnemonicParsing="false"
+                    text="Delete Cell">
+                <HBox.margin>
+                    <Insets right="420.0"/>
+                </HBox.margin>
+                <font>
+                    <Font name="Calibri Light" size="13.0"/>
+                </font>
+                <effect>
+                    <Blend/>
+                </effect>
+            </Button>
+            <Button fx:id="analyze_btn" mnemonicParsing="false" text="Analyze &gt;">
+                <font>
+                    <Font name="Calibri Light" size="13.0"/>
+                </font>
+            </Button>
+        </HBox>
+    </VBox>
 </VBox>

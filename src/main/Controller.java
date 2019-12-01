@@ -1,5 +1,6 @@
 package main;
 
-public class Controller {
+import javafx.scene.control.Button;
 
+public class Controller {
 }
