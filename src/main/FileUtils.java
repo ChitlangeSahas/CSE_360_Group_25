@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class FileUtils {
 
-    ArrayList<String> file_to_tokens(File file) throws IOException {
+    ArrayList<Grade> file_to_tokens(File file) throws IOException {
         ArrayList<Grade> data = new ArrayList<>();
         String csvFile = file.getAbsolutePath();
         BufferedReader br = null;

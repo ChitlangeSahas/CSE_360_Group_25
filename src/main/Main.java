@@ -1,8 +1,6 @@
 package main;
 
 import javafx.application.Application;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -15,16 +13,19 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.cert.TrustAnchor;
 import java.util.ArrayList;
 
 public class Main extends Application {
     private Scene prev_scene;
-    private ArrayList<Grade> data_al = new ArrayList<>();
+    private ArrayList<Grade> grades_list = new ArrayList<>();
+    TableView<Grade> table = new TableView<>();
+    TableColumn<Grade, Double> columnOne = new TableColumn<>("Grades");
+    TableColumn<Grade, Double> columnTwo = new TableColumn<>("C2");
+    TableColumn<Grade, Double> columnThree = new TableColumn<>("C3");
+    TableColumn<Grade, Double> columnFour = new TableColumn<>("C4");
 
     public static void main(String[] args) {
         launch(args);
@@ -61,6 +62,8 @@ public class Main extends Application {
         primaryStage.setTitle("Grade Analytics Tool");
         Scene analysis_screen_screen = new Scene(analysis_screen_root, 680, 352);
 
+        table = (TableView) data_screen_scene.lookup("#table_tb");
+        table.getColumns().addAll(columnOne);
         // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-ENTRY SCREEN HANDLERS-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
         // handler for when enter manually image is clicked
         ImageView enter_manually_img = (ImageView) entry_screen_scene.lookup("#enter_manually_img");
@@ -86,42 +89,23 @@ public class Main extends Application {
                 );
                 File selectedFile = fileChooser.showOpenDialog(new Stage());
 
-                // TODO Add data to the tableview
-
                 FileUtils fileUtils = new FileUtils();
                 try {
                     // clear the data and add new.
-                    data_al.clear();
-                    data_al = fileUtils.file_to_tokens(selectedFile);
-                } catch (IOException e)
-                {
+                    grades_list.clear();
+                    grades_list = fileUtils.file_to_tokens(selectedFile);
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-                System.out.println(data_al.size());
+                System.out.println(grades_list.size());
 
-                    TableColumn columnTitle = new TableColumn<>("columnTitle");
-                    TableColumn columnQuantity = new TableColumn<>("columnQuantity");
-                    TableColumn columnUUID = new TableColumn<>("columnUUID");
+                ObservableList<Grade> data = FXCollections.<Grade>observableArrayList();
+                data.addAll(grades_list);
 
-                    TableView<Float> tableBookList = (TableView<Float>) data_screen_scene.lookup("#table_tb");
-                    ObservableList<Float> table_data = FXCollections.<Float>observableArrayList();
-                    ArrayList<Float> data_al_float = new ArrayList<Float>();
-                    for (String element : data_al)
-                    {
-                        data_al_float.add(Float.parseFloat(element));
-                    }
+                columnOne.setCellValueFactory(new PropertyValueFactory<Grade, Double>("grade"));
 
-                    table_data.addAll();
-
-                    columnTitle.setCellValueFactory(new PropertyValueFactory<Grade, Float>("column_one"));
-                    columnQuantity.setCellValueFactory(new PropertyValueFactory<Grade, Integer>("column_two"));
-                    columnUUID.setCellValueFactory(new PropertyValueFactory<Grade, String>("column_three"));
-
-                    tableBookList.setItems(table_data);
-
-                    // This is working but adding three new columns every time :(
-                    tableBookList.getColumns().addAll(columnTitle, columnQuantity, columnUUID);
+                table.setItems(data);
 
 
                 prev_scene = entry_screen_scene;
@@ -195,7 +179,22 @@ public class Main extends Application {
                         , new FileChooser.ExtensionFilter("CSV Files", "*.csv")
                 );
                 File selectedFile = fileChooser.showOpenDialog(new Stage());
-                prev_scene = data_screen_scene;
+
+                FileUtils fileUtils = new FileUtils();
+                try {
+                    grades_list.addAll(fileUtils.file_to_tokens(selectedFile));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println(grades_list.size());
+                ObservableList<Grade> data = FXCollections.<Grade>observableArrayList();
+                data.addAll(grades_list);
+                columnOne.setCellValueFactory(new PropertyValueFactory<Grade, Double>("grade"));
+                table.setItems(data);
+                prev_scene = entry_screen_scene;
+                primaryStage.setScene(data_screen_scene);
+                primaryStage.show();
             }
         });
 
@@ -203,7 +202,57 @@ public class Main extends Application {
         data_screen_delete_btn.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                System.out.println("Deleting Cell OK");
+                TextField value_edit_tf = (TextField) data_screen_scene.lookup("#value_edit_tf");
+                try {
+                    Double value = (Double.parseDouble(value_edit_tf.getText()));
+
+                    for (Grade g : grades_list) {
+                        if (g.getGrade().equals(value)) {
+                            grades_list.remove(g);
+                            break;
+                        }
+                    }
+                    ObservableList<Grade> data = FXCollections.<Grade>observableArrayList();
+                    data.addAll(grades_list);
+                    columnOne.setCellValueFactory(new PropertyValueFactory<Grade, Double>("grade"));
+                    table.setItems(data);
+                    table.refresh();
+                } catch (NumberFormatException e) {
+                    Alert a = new Alert(Alert.AlertType.ERROR);
+                    a.setContentText("Incorrect Number Format. Integer or Decimal values expected.");
+                    a.show();
+                }
+
+            }
+        });
+        Button data_screen_add_btn = (Button) data_screen_scene.lookup("#add_btn");
+        data_screen_add_btn.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                TextField value_edit_tf = (TextField) data_screen_scene.lookup("#value_edit_tf");
+                try {
+                    Double value = (Double.parseDouble(value_edit_tf.getText()));
+                    if (value >= Settings.GRADE_LEFT_BOUNDARY && value <= Settings.GRADE_RIGHT_BOUNDARY)
+                    {
+                        grades_list.add(new Grade(value));
+                        ObservableList<Grade> data = FXCollections.<Grade>observableArrayList();
+                        data.addAll(grades_list);
+                        columnOne.setCellValueFactory(new PropertyValueFactory<Grade, Double>("grade"));
+                        table.setItems(data);
+                        table.refresh();
+                    }
+                    else
+                        {
+                            Alert a = new Alert(Alert.AlertType.ERROR);
+                            a.setContentText("Value Entered is out of accepted bounds.");
+                            a.show();
+                        }
+                } catch (NumberFormatException e) {
+                    Alert a = new Alert(Alert.AlertType.ERROR);
+                    a.setContentText("Incorrect Number Format. Integer or Decimal values expected.");
+                    a.show();
+                }
+
             }
         });
         Button data_screen_analyze_btn = (Button) data_screen_scene.lookup("#analyze_btn");
