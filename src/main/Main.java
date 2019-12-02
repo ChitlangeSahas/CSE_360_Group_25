@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Main extends Application {
     private Scene prev_scene;
@@ -60,7 +61,7 @@ public class Main extends Application {
         analysis_screen_loader.setLocation(getClass().getResource("analysis_screen.fxml"));
         Parent analysis_screen_root = (Parent) analysis_screen_loader.load();
         primaryStage.setTitle("Grade Analytics Tool");
-        Scene analysis_screen_screen = new Scene(analysis_screen_root, 680, 352);
+        Scene analysis_screen_scene = new Scene(analysis_screen_root, 680, 352);
 
         table = (TableView) data_screen_scene.lookup("#table_tb");
         table.getColumns().addAll(columnOne);
@@ -259,7 +260,35 @@ public class Main extends Application {
         data_screen_analyze_btn.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                primaryStage.setScene(analysis_screen_screen);
+                Label mean_lbl = (Label) analysis_screen_scene.lookup("#mean_lbl");
+                Label median_lbl = (Label) analysis_screen_scene.lookup("#median_lbl");
+                int count = 0;
+                Double sum = 0.0;
+                for (Grade g : grades_list)
+                {
+                    sum += g.getGrade();
+                    count++;
+                }
+                ArrayList<Grade> sorted_list = grades_list;
+                Collections.sort(sorted_list);
+
+                mean_lbl.setText(String.valueOf(sum/count));
+                if (sorted_list.size() % 2 != 0)
+                {
+                    median_lbl.setText(String.valueOf(sorted_list.get(sorted_list.size()/2).getGrade()));
+                }
+                else
+                {
+                 // 1 2 3 4   4 / 2 = 2 and 2 - 1
+                    median_lbl.setText(String.valueOf(
+                            (sorted_list.get(sorted_list.size()/2).getGrade()
+                            + sorted_list.get(sorted_list.size()/2 - 1).getGrade()) / 2
+                    ));
+                }
+
+                System.out.println(Collections.frequency(grades_list, new Grade(1.0))); // TODO Here
+
+                primaryStage.setScene(analysis_screen_scene);
                 primaryStage.show();
                 prev_scene = data_screen_scene;
             }

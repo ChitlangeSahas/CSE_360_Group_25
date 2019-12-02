@@ -61,11 +61,11 @@
            <HBox.margin>
                <Insets bottom="10.0" right="10.0" top="10.0" />
            </HBox.margin>
-           <Label text="35.0">
+           <Label fx:id="mean_lbl" text="35.0">
                <font>
            <Font name="Calibri Light" size="14.0" />
            </font></Label>
-           <Label text="69">
+           <Label fx:id="median_lbl" text="69">
                <font>
                    <Font name="Calibri Light" size="14.0" />
                </font></Label>
