@@ -2,23 +2,29 @@ package main;
 
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.cert.TrustAnchor;
 import java.util.ArrayList;
 
 public class Main extends Application {
     private Scene prev_scene;
-    private ArrayList<String> data = new ArrayList<>();
+    private ArrayList<Grade> data_al = new ArrayList<>();
 
     public static void main(String[] args) {
         launch(args);
@@ -80,32 +86,43 @@ public class Main extends Application {
                 );
                 File selectedFile = fileChooser.showOpenDialog(new Stage());
 
+                // TODO Add data to the tableview
+
                 FileUtils fileUtils = new FileUtils();
                 try {
                     // clear the data and add new.
-                    data.clear();
-                    data = fileUtils.file_to_tokens(selectedFile);
-                } catch (IOException e) {
+                    data_al.clear();
+                    data_al = fileUtils.file_to_tokens(selectedFile);
+                } catch (IOException e)
+                {
                     e.printStackTrace();
                 }
-                System.out.println(data.size());
 
+                System.out.println(data_al.size());
 
-                TableView<String> table = (TableView<String>) data_screen_scene.lookup("#table_tb");
+                    TableColumn columnTitle = new TableColumn<>("columnTitle");
+                    TableColumn columnQuantity = new TableColumn<>("columnQuantity");
+                    TableColumn columnUUID = new TableColumn<>("columnUUID");
 
-                TableColumn columnOne = new TableColumn("C1");
-                TableColumn columnTwo = new TableColumn("C2");
-                TableColumn columnThree = new TableColumn("C3");
-                TableColumn columnFour = new TableColumn("C4");
+                    TableView<Float> tableBookList = (TableView<Float>) data_screen_scene.lookup("#table_tb");
+                    ObservableList<Float> table_data = FXCollections.<Float>observableArrayList();
+                    ArrayList<Float> data_al_float = new ArrayList<Float>();
+                    for (String element : data_al)
+                    {
+                        data_al_float.add(Float.parseFloat(element));
+                    }
 
-                table.getColumns().addAll(columnOne, columnTwo, columnThree, columnFour);
+                    table_data.addAll();
 
-                columnOne.setCellValueFactory(c -> new SimpleStringProperty(data.get(0)));
-                columnTwo.setCellValueFactory(c -> new SimpleStringProperty(data.get(1)));
-                columnThree.setCellValueFactory(c -> new SimpleStringProperty(data.get(2)));
-                columnFour.setCellValueFactory(c -> new SimpleStringProperty(data.get(3)));
+                    columnTitle.setCellValueFactory(new PropertyValueFactory<Grade, Float>("column_one"));
+                    columnQuantity.setCellValueFactory(new PropertyValueFactory<Grade, Integer>("column_two"));
+                    columnUUID.setCellValueFactory(new PropertyValueFactory<Grade, String>("column_three"));
 
-                table.getItems().addAll(data);
+                    tableBookList.setItems(table_data);
+
+                    // This is working but adding three new columns every time :(
+                    tableBookList.getColumns().addAll(columnTitle, columnQuantity, columnUUID);
+
 
                 prev_scene = entry_screen_scene;
                 primaryStage.setScene(data_screen_scene);
@@ -201,4 +218,5 @@ public class Main extends Application {
         primaryStage.setScene(entry_screen_scene);
         primaryStage.show();
     }
+
 }

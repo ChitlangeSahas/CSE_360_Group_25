@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class FileUtils {
 
     ArrayList<String> file_to_tokens(File file) throws IOException {
-        ArrayList<String> data = new ArrayList<>();
+        ArrayList<Grade> data = new ArrayList<>();
         String csvFile = file.getAbsolutePath();
         BufferedReader br = null;
         String line = "";
@@ -30,7 +30,11 @@ public class FileUtils {
             br = new BufferedReader(new FileReader(csvFile));
             while ((line = br.readLine()) != null) {
                 String[] country = line.split(cvsSplitBy);
-                data.add(country[0]);
+                if (Settings.GRADE_LEFT_BOUNDARY <= Float.parseFloat(country[0]) && Settings.GRADE_RIGHT_BOUNDARY >= Float.parseFloat(country[0]))
+                {
+                    data.add(new Grade(Double.parseDouble(country[0])));
+                }
+                else System.out.println("ERROR LOG TODO");
             }
         } catch (IOException e) {
             e.printStackTrace();
