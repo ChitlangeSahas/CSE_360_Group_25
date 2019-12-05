@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="352.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="352.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
     <ToolBar fx:id="upper_toolbar" prefHeight="40.0" prefWidth="200.0">
         <Button fx:id="settings" alignment="CENTER_RIGHT" cancelButton="true" mnemonicParsing="false" text="Settings">
          <font>
@@ -21,6 +21,10 @@
          <font>
             <Font name="Calibri Light" size="13.0" />
          </font></Button>
+        <Button fx:id="error_log_btn" mnemonicParsing="false" text="Open Error Log">
+            <font>
+                <Font name="Calibri Light" size="13.0" />
+            </font></Button>
     </ToolBar>
     <TableView fx:id="table_tb" editable="true" prefWidth="600.0" tableMenuButtonVisible="true" translateZ="2.0">
       <VBox.margin>

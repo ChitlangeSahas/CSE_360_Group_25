@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class FileUtils {
-
+    ERROR_LOG_MESSAGES ERROR_LOGGER = new ERROR_LOG_MESSAGES();
     ArrayList<Grade> file_to_tokens(File file) throws IOException {
         ArrayList<Grade> data = new ArrayList<>();
         String csvFile = file.getAbsolutePath();
@@ -34,7 +34,7 @@ public class FileUtils {
                 {
                     data.add(new Grade(Double.parseDouble(country[0])));
                 }
-                else System.out.println("ERROR LOG TODO");
+                else ERROR_LOGGER.LOG_ERROR("ERROR : INPUT OUT OF BOUNDS < " + country[0] + " >");
             }
         } catch (IOException e) {
             e.printStackTrace();
