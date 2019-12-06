@@ -27,6 +27,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static java.lang.Math.log;
 import static java.lang.Math.round;
 
 public class Main extends Application {
@@ -148,7 +149,6 @@ public class Main extends Application {
                 columnOne.setCellValueFactory(new PropertyValueFactory<Grade, Double>("grade"));
 
                 table.setItems(data);
-
 
                 prev_scene = entry_screen_scene;
                 primaryStage.setScene(data_screen_scene);
@@ -355,8 +355,18 @@ public class Main extends Application {
                     }
 
                     for (double i : degree_distribution) {
-                        System.out.println(i);
+                        System.out.print(i + " ");
                     }
+                    System.out.println();
+
+                    for (Grade g : sorted_list) {
+                        System.out.print(g.getGrade() + " ");
+                    }
+                    System.out.println();
+                    for (Grade g : grades_list) {
+                        System.out.print(g.getGrade() + " ");
+                    }
+                    System.out.println();
                     Collections.sort(degree_distribution);
                     xAxis.setLabel("Grade Range");
                     yAxis.setLabel("Grade Frequency");
@@ -364,8 +374,14 @@ public class Main extends Application {
                     XYChart.Series series1 = new XYChart.Series();
                     series1.setName("Histogram for data");
 
-                    for (double grade : degree_distribution) {
-                        series1.getData().add(new XYChart.Data(String.valueOf(grade), Collections.frequency(grades_list, new Grade(grade))));
+                    int n_bins = (int) (1 + 3.322*log(grades_list.size()));
+                    System.out.println("Number of bins = " + n_bins);
+                    double bin_size = sorted_list.size()/n_bins;
+                    System.out.println("Bin Size = " + bin_size);
+
+                    for (double grade : degree_distribution)
+                    {
+                        series1.getData().add(new XYChart.Data(String.valueOf(grade) , Collections.frequency(grades_list, new Grade(grade))));
                     }
 
                     barChart.getData().addAll(series1);
