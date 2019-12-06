@@ -16,7 +16,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -38,7 +37,8 @@ public class Main extends Application {
     TableColumn<Grade, Double> columnFour = new TableColumn<>("C4");
     private Scene prev_scene;
     private ArrayList<Grade> grades_list = new ArrayList<>();
-    ERROR_LOG_MESSAGES ERROR_LOGGER = new ERROR_LOG_MESSAGES();
+    ErrorLogger ERROR_LOGGER = new ErrorLogger();
+    double mean, mode, median, max, min;
 
     public static void main(String[] args) {
         launch(args);
@@ -319,21 +319,26 @@ public class Main extends Application {
                     Collections.sort(sorted_list);
 
                     mean_lbl.setText(String.valueOf(df.format(sum / count))); // set mean
+                    mean = sum / count;
                     if (sorted_list.size() % 2 != 0) {
                         median_lbl.setText(String.valueOf(df.format(sorted_list.get(sorted_list.size() / 2).getGrade())));
+                        median = sorted_list.get(sorted_list.size() / 2).getGrade();
                     } else {
                         median_lbl.setText(String.valueOf(df.format(
                                 (sorted_list.get(sorted_list.size() / 2).getGrade()
                                         + sorted_list.get(sorted_list.size() / 2 - 1).getGrade()) / 2
                         )));
+                        median = sorted_list.get(sorted_list.size() / 2).getGrade()
+                                + sorted_list.get(sorted_list.size() / 2 - 1).getGrade() / 2;
                     }
 
                     mode_lbl.setText(String.valueOf(df.format(get_mode(grades_list))));
-
+                    mode = get_mode(grades_list);
                     System.out.println(Collections.frequency(grades_list, new Grade(1.0)));
                     max_lbl.setText(String.valueOf(df.format(sorted_list.get(sorted_list.size() - 1).getGrade()))); // set the max grade
                     min_lbl.setText(String.valueOf(df.format(sorted_list.get(0).getGrade()))); // set the min grade
-
+                    max = sorted_list.get(sorted_list.size() - 1).getGrade();
+                    min = sorted_list.get(0).getGrade();
                     // histogram stuff
                     ArrayList<Double> degree_distribution = new ArrayList<>();
                     final CategoryAxis xAxis = new CategoryAxis();
@@ -419,7 +424,7 @@ public class Main extends Application {
 
 
     void export_data(boolean export_error_log) throws IOException {
-        StringBuilder export_data = new StringBuilder("EXPORTED DATA \n\n");
+        StringBuilder export_data = new StringBuilder("EXPORTED DATA \n");
         String separator = "\n-----------------------------------------------\n";
 
         //
@@ -429,13 +434,19 @@ public class Main extends Application {
         {
             export_data.append(String.valueOf(g.getGrade()) + " , ");
         }
+        export_data.append(separator);
         export_data.append("Size of the dataset : " + grades_list.size() + "\n");
+        export_data.append("Boundary settings : " + Settings.GRADE_LEFT_BOUNDARY + " <" + " Grade " + "< " + Settings.GRADE_RIGHT_BOUNDARY + "\n");
+        export_data.append("Grade data statistics : " + "\n");
+        export_data.append("\tMean : " + mean + "\n");
+        export_data.append("\tMedian : " + median + "\n");
+        export_data.append("\tMode : " + mode + "\n");
+        export_data.append("\tMin : " + min + "\n");
+        export_data.append("\tMax : " + max + "\n");
 
         export_data.append(separator);
 
-
         if (export_error_log) {
-            export_data.append("\n+-+-+-+-+-+-+-+-+- ERROR LOG +-+-+-+-+-+-+-+-+-+-+-+\n");
             export_data.append(ERROR_LOGGER.getErrorLogString());
         }
         BufferedWriter writer = new BufferedWriter(new FileWriter("Data.txt"));

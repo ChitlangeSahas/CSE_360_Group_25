@@ -1,7 +1,7 @@
 package main;
 
-public class ERROR_LOG_MESSAGES {
-    private static String ERROR_LOG_STRING = "ERROR LOG\n";
+public class ErrorLogger {
+    private static String ERROR_LOG_STRING = "+-+-+-+-+-+-+-+-+- ERROR LOG +-+-+-+-+-+-+-+-+-+-+-+\n";
 
     public void LOG_ERROR(String e)
     {
