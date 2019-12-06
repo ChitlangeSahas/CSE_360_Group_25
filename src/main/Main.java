@@ -28,31 +28,35 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import static java.lang.Math.log;
-import static java.lang.Math.round;
 
+/*
+ * Main class
+ */
 public class Main extends Application {
-    TableView<Grade> table = new TableView<>();
-    TableColumn<Grade, Double> columnOne = new TableColumn<>("Grades");
-    TableColumn<Grade, Double> columnTwo = new TableColumn<>("C2");
-    TableColumn<Grade, Double> columnThree = new TableColumn<>("C3");
-    TableColumn<Grade, Double> columnFour = new TableColumn<>("C4");
+    private TableView table = new TableView<>(); //
+    private TableColumn<Grade, Double> columnOne = new TableColumn<>("Grades");//
     private Scene prev_scene;
     private ArrayList<Grade> grades_list = new ArrayList<>();
-    ErrorLogger ERROR_LOGGER = new ErrorLogger();
-    double mean, mode, median, max, min;
+    private ErrorLogger ERROR_LOGGER = new ErrorLogger();
+    private double mean, mode, median, max, min;
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    public static double get_mode(ArrayList<Grade> grades) {
+
+    /**
+     * @param grades takes an arraylist of Grade class
+     * @return the mode
+     */
+    private static double get_mode(ArrayList<Grade> grades) {
         Double mode = grades.get(0).getGrade();
         int maxCount = 0;
         for (int i = 0; i < grades.size(); i++) {
             double value = grades.get(i).getGrade();
             int count = 0;
-            for (int j = 0; j < grades.size(); j++) {
-                if (grades.get(j).getGrade() == value) count++;
+            for (Grade grade : grades) {
+                if (grade.getGrade() == value) count++;
                 if (count > maxCount) {
                     mode = value;
                     maxCount = count;
@@ -78,34 +82,34 @@ public class Main extends Application {
         // settings screen
         FXMLLoader settings_screen_loader = new FXMLLoader();
         settings_screen_loader.setLocation(getClass().getResource("settings_screen.fxml"));
-        Parent settings_screen_root = (Parent) settings_screen_loader.load();
+        Parent settings_screen_root = settings_screen_loader.load();
         primaryStage.setTitle("Grade Analytics Tool");
         Scene settings_screen_scene = new Scene(settings_screen_root, 600, 352);
 
         // data screen
         FXMLLoader data_screen_loader = new FXMLLoader();
         data_screen_loader.setLocation(getClass().getResource("data_screen.fxml"));
-        Parent data_screen_root = (Parent) data_screen_loader.load();
+        Parent data_screen_root = data_screen_loader.load();
         primaryStage.setTitle("Grade Analytics Tool");
         Scene data_screen_scene = new Scene(data_screen_root, 625, 352);
 
         // analysis screen
         FXMLLoader analysis_screen_loader = new FXMLLoader();
         analysis_screen_loader.setLocation(getClass().getResource("analysis_screen.fxml"));
-        Parent analysis_screen_root = (Parent) analysis_screen_loader.load();
+        Parent analysis_screen_root = analysis_screen_loader.load();
         primaryStage.setTitle("Grade Analytics Tool");
         Scene analysis_screen_scene = new Scene(analysis_screen_root, 680, 420);
 
         // Error log screen
         FXMLLoader error_log_loader = new FXMLLoader();
         error_log_loader.setLocation(getClass().getResource("error_log_screen.fxml"));
-        Parent error_screen_root = (Parent) error_log_loader.load();
+        Parent error_screen_root = error_log_loader.load();
 
         Stage error_stage = new Stage();
         error_stage.setTitle("Grade Analytics Tool");
         Scene error_log_scene = new Scene(error_screen_root, 600, 352);
 
-        table = (TableView) data_screen_scene.lookup("#table_tb");
+        table = (TableView) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(0);
         table.getColumns().addAll(columnOne);
         // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-ENTRY SCREEN HANDLERS-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
         // handler for when enter manually image is clicked
@@ -149,6 +153,34 @@ public class Main extends Application {
                 columnOne.setCellValueFactory(new PropertyValueFactory<Grade, Double>("grade"));
 
                 table.setItems(data);
+
+                TextArea c_tf_1 = (TextArea) ((TitledPane) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(1)).getContent().lookup("#c_tf_1");
+                TextArea c_tf_2 = (TextArea) ((TitledPane) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(1)).getContent().lookup("#c_tf_2");
+                TextArea c_tf_3 = (TextArea) ((TitledPane) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(1)).getContent().lookup("#c_tf_3");
+                TextArea c_tf_4 = (TextArea) ((TitledPane) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(1)).getContent().lookup("#c_tf_4");
+
+                ArrayList<Grade> sorted_list = grades_list;
+                Collections.sort(sorted_list);
+                Collections.reverse(sorted_list);
+
+                ArrayList<ArrayList<Grade>> chopped_sorted_list = chopped(sorted_list, sorted_list.size() / 4);
+
+                for (int i = 0; i < chopped_sorted_list.get(0).size(); i++) {
+                    c_tf_1.appendText(String.valueOf(chopped_sorted_list.get(0).get(i).getGrade()));
+                    c_tf_1.appendText("\n");
+                }
+                for (int i = 0; i < chopped_sorted_list.get(1).size(); i++) {
+                    c_tf_2.appendText(String.valueOf(chopped_sorted_list.get(1).get(i).getGrade()));
+                    c_tf_2.appendText("\n");
+                }
+                for (int i = 0; i < chopped_sorted_list.get(2).size(); i++) {
+                    c_tf_3.appendText(String.valueOf(chopped_sorted_list.get(2).get(i).getGrade()));
+                    c_tf_3.appendText("\n");
+                }
+                for (int i = 0; i < chopped_sorted_list.get(3).size(); i++) {
+                    c_tf_4.appendText(String.valueOf(chopped_sorted_list.get(3).get(i).getGrade()));
+                    c_tf_4.appendText("\n");
+                }
 
                 prev_scene = entry_screen_scene;
                 primaryStage.setScene(data_screen_scene);
@@ -234,6 +266,38 @@ public class Main extends Application {
                 data.addAll(grades_list);
                 columnOne.setCellValueFactory(new PropertyValueFactory<Grade, Double>("grade"));
                 table.setItems(data);
+                TextArea c_tf_1 = (TextArea) ((TitledPane) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(1)).getContent().lookup("#c_tf_1");
+                TextArea c_tf_2 = (TextArea) ((TitledPane) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(1)).getContent().lookup("#c_tf_2");
+                TextArea c_tf_3 = (TextArea) ((TitledPane) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(1)).getContent().lookup("#c_tf_3");
+                TextArea c_tf_4 = (TextArea) ((TitledPane) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(1)).getContent().lookup("#c_tf_4");
+
+                c_tf_1.clear();
+                c_tf_2.clear();
+                c_tf_3.clear();
+                c_tf_4.clear();
+                ArrayList<Grade> sorted_list = grades_list;
+                Collections.sort(sorted_list);
+                Collections.reverse(sorted_list);
+
+                ArrayList<ArrayList<Grade>> chopped_sorted_list = chopped(sorted_list, sorted_list.size() / 4);
+
+                for (int i = 0; i < chopped_sorted_list.get(0).size(); i++) {
+                    c_tf_1.appendText(String.valueOf(chopped_sorted_list.get(0).get(i).getGrade()));
+                    c_tf_1.appendText("\n");
+                }
+                for (int i = 0; i < chopped_sorted_list.get(1).size(); i++) {
+                    c_tf_2.appendText(String.valueOf(chopped_sorted_list.get(1).get(i).getGrade()));
+                    c_tf_2.appendText("\n");
+                }
+                for (int i = 0; i < chopped_sorted_list.get(2).size(); i++) {
+                    c_tf_3.appendText(String.valueOf(chopped_sorted_list.get(2).get(i).getGrade()));
+                    c_tf_3.appendText("\n");
+                }
+                for (int i = 0; i < chopped_sorted_list.get(3).size(); i++) {
+                    c_tf_4.appendText(String.valueOf(chopped_sorted_list.get(3).get(i).getGrade()));
+                    c_tf_4.appendText("\n");
+                }
+
                 prev_scene = entry_screen_scene;
                 primaryStage.setScene(data_screen_scene);
                 primaryStage.show();
@@ -256,9 +320,42 @@ public class Main extends Application {
                     }
                     ObservableList<Grade> data = FXCollections.<Grade>observableArrayList();
                     data.addAll(grades_list);
+
                     columnOne.setCellValueFactory(new PropertyValueFactory<Grade, Double>("grade"));
                     table.setItems(data);
                     table.refresh();
+                    TextArea c_tf_1 = (TextArea) ((TitledPane) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(1)).getContent().lookup("#c_tf_1");
+                    TextArea c_tf_2 = (TextArea) ((TitledPane) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(1)).getContent().lookup("#c_tf_2");
+                    TextArea c_tf_3 = (TextArea) ((TitledPane) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(1)).getContent().lookup("#c_tf_3");
+                    TextArea c_tf_4 = (TextArea) ((TitledPane) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(1)).getContent().lookup("#c_tf_4");
+
+                    c_tf_1.clear();
+                    c_tf_2.clear();
+                    c_tf_3.clear();
+                    c_tf_4.clear();
+                    ArrayList<Grade> sorted_list = grades_list;
+                    Collections.sort(sorted_list);
+                    Collections.reverse(sorted_list);
+
+                    ArrayList<ArrayList<Grade>> chopped_sorted_list = chopped(sorted_list, sorted_list.size() / 4);
+
+                    for (int i = 0; i < chopped_sorted_list.get(0).size(); i++) {
+                        c_tf_1.appendText(String.valueOf(chopped_sorted_list.get(0).get(i).getGrade()));
+                        c_tf_1.appendText("\n");
+                    }
+                    for (int i = 0; i < chopped_sorted_list.get(1).size(); i++) {
+                        c_tf_2.appendText(String.valueOf(chopped_sorted_list.get(1).get(i).getGrade()));
+                        c_tf_2.appendText("\n");
+                    }
+                    for (int i = 0; i < chopped_sorted_list.get(2).size(); i++) {
+                        c_tf_3.appendText(String.valueOf(chopped_sorted_list.get(2).get(i).getGrade()));
+                        c_tf_3.appendText("\n");
+                    }
+                    for (int i = 0; i < chopped_sorted_list.get(3).size(); i++) {
+                        c_tf_4.appendText(String.valueOf(chopped_sorted_list.get(3).get(i).getGrade()));
+                        c_tf_4.appendText("\n");
+                    }
+
                 } catch (NumberFormatException e) {
                     Alert a = new Alert(Alert.AlertType.ERROR);
                     a.setContentText("Incorrect Number Format. Integer or Decimal values expected.");
@@ -274,22 +371,59 @@ public class Main extends Application {
                 TextField value_edit_tf = (TextField) data_screen_scene.lookup("#value_edit_tf");
                 try {
                     Double value = (Double.parseDouble(value_edit_tf.getText()));
-                    if (value >= Settings.GRADE_LEFT_BOUNDARY && value <= Settings.GRADE_RIGHT_BOUNDARY)
-                    {
+                    if (value >= Settings.GRADE_LEFT_BOUNDARY && value <= Settings.GRADE_RIGHT_BOUNDARY) {
                         grades_list.add(new Grade(value));
                         ObservableList<Grade> data = FXCollections.<Grade>observableArrayList();
                         data.addAll(grades_list);
                         columnOne.setCellValueFactory(new PropertyValueFactory<Grade, Double>("grade"));
                         table.setItems(data);
                         table.refresh();
-                    }
-                    else
+                        table.scrollTo(grades_list.size()-1);
+                        TextArea c_tf_1 = (TextArea) ((TitledPane) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(1)).getContent().lookup("#c_tf_1");
+                        TextArea c_tf_2 = (TextArea) ((TitledPane) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(1)).getContent().lookup("#c_tf_2");
+                        TextArea c_tf_3 = (TextArea) ((TitledPane) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(1)).getContent().lookup("#c_tf_3");
+                        TextArea c_tf_4 = (TextArea) ((TitledPane) ((SplitPane) data_screen_scene.lookup("#split_pane")).getItems().get(1)).getContent().lookup("#c_tf_4");
+
+                        c_tf_1.clear();
+                        c_tf_2.clear();
+                        c_tf_3.clear();
+                        c_tf_4.clear();
+                        ArrayList<Grade> sorted_list = grades_list;
+                        Collections.sort(sorted_list);
+                        Collections.reverse(sorted_list);
+
+                        int partition_size = 0;
+                        if (sorted_list.size() % 4 == 0)
                         {
-                            Alert a = new Alert(Alert.AlertType.ERROR);
-                            a.setContentText("Value Entered is out of accepted bounds.");
-                            a.show();
-                            ERROR_LOGGER.LOG_ERROR("ERROR : INPUT OUT OF BOUNDS < " + value + " >");
+                            partition_size = sorted_list.size()/4;
                         }
+                        else {
+                            partition_size = (sorted_list.size()/4) % 4;
+                        }
+                        ArrayList<ArrayList<Grade>> chopped_sorted_list = chopped(sorted_list, sorted_list.size() / 4);
+
+                        for (int i = 0; i < chopped_sorted_list.get(0).size(); i++) {
+                            c_tf_1.appendText(String.valueOf(chopped_sorted_list.get(0).get(i).getGrade()));
+                            c_tf_1.appendText("\n");
+                        }
+                        for (int i = 0; i < chopped_sorted_list.get(1).size(); i++) {
+                            c_tf_2.appendText(String.valueOf(chopped_sorted_list.get(1).get(i).getGrade()));
+                            c_tf_2.appendText("\n");
+                        }
+                        for (int i = 0; i < chopped_sorted_list.get(2).size(); i++) {
+                            c_tf_3.appendText(String.valueOf(chopped_sorted_list.get(2).get(i).getGrade()));
+                            c_tf_3.appendText("\n");
+                        }
+                        for (int i = 0; i < chopped_sorted_list.get(3).size(); i++) {
+                            c_tf_4.appendText(String.valueOf(chopped_sorted_list.get(3).get(i).getGrade()));
+                            c_tf_4.appendText("\n");
+                        }
+                    } else {
+                        Alert a = new Alert(Alert.AlertType.ERROR);
+                        a.setContentText("Value Entered is out of accepted bounds.");
+                        a.show();
+                        ERROR_LOGGER.LOG_ERROR("ERROR : INPUT OUT OF BOUNDS < " + value + " >");
+                    }
                 } catch (NumberFormatException e) {
                     Alert a = new Alert(Alert.AlertType.ERROR);
                     a.setContentText("Incorrect Number Format. Integer or Decimal values expected.");
@@ -301,6 +435,7 @@ public class Main extends Application {
         Button data_screen_analyze_btn = (Button) data_screen_scene.lookup("#analyze_btn");
         data_screen_analyze_btn.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             private DecimalFormat df = new DecimalFormat("0.00");
+
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (grades_list.size() > 0) {
@@ -374,14 +509,13 @@ public class Main extends Application {
                     XYChart.Series series1 = new XYChart.Series();
                     series1.setName("Histogram for data");
 
-                    int n_bins = (int) (1 + 3.322*log(grades_list.size()));
+                    int n_bins = (int) (1 + 3.322 * log(grades_list.size()));
                     System.out.println("Number of bins = " + n_bins);
-                    double bin_size = sorted_list.size()/n_bins;
+                    double bin_size = sorted_list.size() / n_bins;
                     System.out.println("Bin Size = " + bin_size);
 
-                    for (double grade : degree_distribution)
-                    {
-                        series1.getData().add(new XYChart.Data(String.valueOf(grade) , Collections.frequency(grades_list, new Grade(grade))));
+                    for (double grade : degree_distribution) {
+                        series1.getData().add(new XYChart.Data(String.valueOf(grade), Collections.frequency(grades_list, new Grade(grade))));
                     }
 
                     barChart.getData().addAll(series1);
@@ -392,17 +526,17 @@ public class Main extends Application {
                     primaryStage.setScene(analysis_screen_scene);
                     primaryStage.show();
                     prev_scene = data_screen_scene;
-                }
-                else {
+                } else {
                     Alert a = new Alert(Alert.AlertType.WARNING);
                     a.setContentText("No data detected");
                     a.show();
-                } // TODO show dialog box for no data.
+                }
             }
         });
 
+
         Button error_log_btn = (Button) ((ToolBar) data_screen_scene.lookup("#upper_toolbar")).getItems().get(2);
-        error_log_btn.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+        error_log_btn.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
 
@@ -412,7 +546,7 @@ public class Main extends Application {
                 error_stage.setScene(error_log_scene);
                 error_stage.show();
             }
-        } );
+        });
 
         // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-ANALYSIS SCREEN HANDLERS-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
         Button export_data_btn = (Button) analysis_screen_scene.lookup("#export_data_btn");
@@ -434,10 +568,33 @@ public class Main extends Application {
             }
         });
 
+
         primaryStage.setScene(entry_screen_scene);
         primaryStage.show();
     }
 
+    /**
+     * @param list of grades to chop
+     * @param L    length of each chopped list
+     * @return the ArrayList of chopped List.
+     */
+    // chop in 4
+    ArrayList<ArrayList<Grade>> chopped(ArrayList<Grade> list, int L) {
+        ArrayList<ArrayList<Grade>> parts = new ArrayList<>();
+        final int N = list.size();
+        if (N % 4 != 0) {
+            parts.add(list);
+            return parts;
+        }
+        else {
+            for (int i = 0; i < N; i += L) {
+                parts.add(new ArrayList<Grade>(
+                        list.subList(i, Math.min(N, i + L)))
+                );
+            }
+        }
+        return parts;
+    }
 
     void export_data(boolean export_error_log) throws IOException {
         StringBuilder export_data = new StringBuilder("EXPORTED DATA \n");
@@ -446,8 +603,7 @@ public class Main extends Application {
         //
         export_data.append(separator);
         export_data.append("Data used in the analysis : \n");
-        for (Grade g : grades_list)
-        {
+        for (Grade g : grades_list) {
             export_data.append(String.valueOf(g.getGrade()) + " , ");
         }
         export_data.append(separator);
@@ -469,6 +625,6 @@ public class Main extends Application {
         writer.write(export_data.toString());
         writer.close();
     }
-
 }
+
 
