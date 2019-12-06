@@ -20,7 +20,9 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -301,81 +303,80 @@ public class Main extends Application {
             private DecimalFormat df = new DecimalFormat("0.00");
             @Override
             public void handle(MouseEvent mouseEvent) {
-                Label mean_lbl = (Label) analysis_screen_scene.lookup("#mean_lbl");
-                Label median_lbl = (Label) analysis_screen_scene.lookup("#median_lbl");
-                Label max_lbl = (Label) analysis_screen_scene.lookup("#max_lbl");
-                Label min_lbl = (Label) analysis_screen_scene.lookup("#min_lbl");
-                Label mode_lbl = (Label) analysis_screen_scene.lookup("#mode_lbl");
-                int count = 0;
-                Double sum = 0.0;
-                for (Grade g : grades_list)
-                {
-                    sum += g.getGrade();
-                    count++;
-                }
-                ArrayList<Grade> sorted_list = grades_list;
-                Collections.sort(sorted_list);
-
-                mean_lbl.setText(String.valueOf(df.format(sum/count))); // set mean
-                if (sorted_list.size() % 2 != 0)
-                {
-                    median_lbl.setText(String.valueOf(df.format(sorted_list.get(sorted_list.size()/2).getGrade())));
-                }
-                else
-                {
-                    median_lbl.setText(String.valueOf(df.format(
-                            (sorted_list.get(sorted_list.size()/2).getGrade()
-                            + sorted_list.get(sorted_list.size()/2 - 1).getGrade()) / 2
-                    )));
-                }
-
-                mode_lbl.setText(String.valueOf(df.format(get_mode(grades_list))));
-
-                System.out.println(Collections.frequency(grades_list, new Grade(1.0)));
-                max_lbl.setText(String.valueOf(df.format(sorted_list.get(sorted_list.size() - 1).getGrade()))); // set the max grade
-                min_lbl.setText(String.valueOf(df.format(sorted_list.get(0).getGrade()))); // set the min grade
-
-                // histogram stuff
-                ArrayList<Double> degree_distribution = new ArrayList<>();
-                final CategoryAxis xAxis = new CategoryAxis();
-                final NumberAxis yAxis = new NumberAxis();
-                final BarChart<String,Number> barChart = new BarChart<>(xAxis,yAxis);
-                barChart.setCategoryGap(2);
-                barChart.setBarGap(2);
-
-
-                for (Grade g : grades_list)
-                {
-                    if (!degree_distribution.contains(g.getGrade()))
-                    {
-                        degree_distribution.add(g.getGrade());
+                if (grades_list.size() > 0) {
+                    Label mean_lbl = (Label) analysis_screen_scene.lookup("#mean_lbl");
+                    Label median_lbl = (Label) analysis_screen_scene.lookup("#median_lbl");
+                    Label max_lbl = (Label) analysis_screen_scene.lookup("#max_lbl");
+                    Label min_lbl = (Label) analysis_screen_scene.lookup("#min_lbl");
+                    Label mode_lbl = (Label) analysis_screen_scene.lookup("#mode_lbl");
+                    int count = 0;
+                    Double sum = 0.0;
+                    for (Grade g : grades_list) {
+                        sum += g.getGrade();
+                        count++;
                     }
+                    ArrayList<Grade> sorted_list = grades_list;
+                    Collections.sort(sorted_list);
+
+                    mean_lbl.setText(String.valueOf(df.format(sum / count))); // set mean
+                    if (sorted_list.size() % 2 != 0) {
+                        median_lbl.setText(String.valueOf(df.format(sorted_list.get(sorted_list.size() / 2).getGrade())));
+                    } else {
+                        median_lbl.setText(String.valueOf(df.format(
+                                (sorted_list.get(sorted_list.size() / 2).getGrade()
+                                        + sorted_list.get(sorted_list.size() / 2 - 1).getGrade()) / 2
+                        )));
+                    }
+
+                    mode_lbl.setText(String.valueOf(df.format(get_mode(grades_list))));
+
+                    System.out.println(Collections.frequency(grades_list, new Grade(1.0)));
+                    max_lbl.setText(String.valueOf(df.format(sorted_list.get(sorted_list.size() - 1).getGrade()))); // set the max grade
+                    min_lbl.setText(String.valueOf(df.format(sorted_list.get(0).getGrade()))); // set the min grade
+
+                    // histogram stuff
+                    ArrayList<Double> degree_distribution = new ArrayList<>();
+                    final CategoryAxis xAxis = new CategoryAxis();
+                    final NumberAxis yAxis = new NumberAxis();
+                    final BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
+                    barChart.setCategoryGap(2);
+                    barChart.setBarGap(2);
+
+
+                    for (Grade g : grades_list) {
+                        if (!degree_distribution.contains(g.getGrade())) {
+                            degree_distribution.add(g.getGrade());
+                        }
+                    }
+
+                    for (double i : degree_distribution) {
+                        System.out.println(i);
+                    }
+                    Collections.sort(degree_distribution);
+                    xAxis.setLabel("Grade Range");
+                    yAxis.setLabel("Grade Frequency");
+
+                    XYChart.Series series1 = new XYChart.Series();
+                    series1.setName("Histogram for data");
+
+                    for (double grade : degree_distribution) {
+                        series1.getData().add(new XYChart.Data(String.valueOf(grade), Collections.frequency(grades_list, new Grade(grade))));
+                    }
+
+                    barChart.getData().addAll(series1);
+
+                    HBox pane = (HBox) analysis_screen_scene.lookup("#histogram_hbox");
+                    pane.getChildren().add(barChart);
+
+                    primaryStage.setScene(analysis_screen_scene);
+                    primaryStage.show();
+                    prev_scene = data_screen_scene;
                 }
-
-                for (double i : degree_distribution)
-                {
-                    System.out.println(i);
-                }
-                Collections.sort(degree_distribution);
-                xAxis.setLabel("Grade Range");
-                yAxis.setLabel("Grade Frequency");
-
-                XYChart.Series series1 = new XYChart.Series();
-                series1.setName("Histogram for data");
-
-                for (double grade : degree_distribution)
-                {
-                    series1.getData().add(new XYChart.Data(String.valueOf(grade) , Collections.frequency(grades_list, new Grade(grade))));
-                }
-
-                barChart.getData().addAll(series1);
-
-                HBox pane = (HBox) analysis_screen_scene.lookup("#histogram_hbox");
-                pane.getChildren().add(barChart);
-
-                primaryStage.setScene(analysis_screen_scene);
-                primaryStage.show();
-                prev_scene = data_screen_scene;
+                else {
+                    Alert a = new Alert(Alert.AlertType.WARNING);
+                    a.setContentText("No data detected");
+                    a.show();
+                } // TODO show dialog box for no data.
             }
         });
 
@@ -391,10 +392,56 @@ public class Main extends Application {
                 error_stage.show();
             }
         } );
+
+        // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-ANALYSIS SCREEN HANDLERS-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
+        Button export_data_btn = (Button) analysis_screen_scene.lookup("#export_data_btn");
+        export_data_btn.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                CheckBox export_error_log_tgl = (CheckBox) analysis_screen_scene.lookup("#export_error_log_tgl");
+                boolean export_error_log = export_error_log_tgl.isSelected();
+                // try exporting the data.
+                try {
+                    export_data(export_error_log);
+                } catch (IOException e) {
+                    // show the error dialog if the export is failed.
+                    e.printStackTrace();
+                    Alert a = new Alert(Alert.AlertType.ERROR);
+                    a.setContentText("Data export Failed.");
+                    a.show();
+                }
+            }
+        });
+
         primaryStage.setScene(entry_screen_scene);
         primaryStage.show();
     }
 
+
+    void export_data(boolean export_error_log) throws IOException {
+        StringBuilder export_data = new StringBuilder("EXPORTED DATA \n\n");
+        String separator = "\n-----------------------------------------------\n";
+
+        //
+        export_data.append(separator);
+        export_data.append("Data used in the analysis : \n");
+        for (Grade g : grades_list)
+        {
+            export_data.append(String.valueOf(g.getGrade()) + " , ");
+        }
+        export_data.append("Size of the dataset : " + grades_list.size() + "\n");
+
+        export_data.append(separator);
+
+
+        if (export_error_log) {
+            export_data.append("\n+-+-+-+-+-+-+-+-+- ERROR LOG +-+-+-+-+-+-+-+-+-+-+-+\n");
+            export_data.append(ERROR_LOGGER.getErrorLogString());
+        }
+        BufferedWriter writer = new BufferedWriter(new FileWriter("Data.txt"));
+        writer.write(export_data.toString());
+        writer.close();
+    }
 
 }
 

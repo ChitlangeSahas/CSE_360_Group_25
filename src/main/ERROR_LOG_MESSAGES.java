@@ -6,6 +6,7 @@ public class ERROR_LOG_MESSAGES {
     public void LOG_ERROR(String e)
     {
         ERROR_LOG_STRING += e;
+        ERROR_LOG_STRING += "\n";
     }
 
     public static String getErrorLogString() {
