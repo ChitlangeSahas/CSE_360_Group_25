@@ -7,6 +7,6 @@ JavaFx was used for the Graphical User Interface (GUI).<br>
 
 ## Beautiful GUI
 *Because good software isn't just about code. Design matters*
-![Welcome Screen](src/res/icons/Welcome_Screen.png)
-![Data Screen](src/res/icons/Data_Screen.png)
-![Analysis Screen](src/res/icons/Analysis_Screen.png) 
+![Welcome Screen](src/res/icons/Welcome_Screen.png | width=500)
+![Data Screen](src/res/icons/Data_Screen.png | width=500)
+![Analysis Screen](src/res/icons/Analysis_Screen.png | width=500) 
