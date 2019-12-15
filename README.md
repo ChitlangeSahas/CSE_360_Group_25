@@ -9,9 +9,9 @@ Group #25.
 *Because good software isn't just about code. Design matters*
 <br>
 <p align="center">
-   <img align="center" width="500" src="src/res/icons/Welcome_Screen.png">
+   <img align="center" width="650" src="src/res/icons/Welcome_Screen.png">
    <br />
-   <img align="center" width="500" src="src/res/icons/Data_Screen.png">
+   <img align="center" width="650" src="src/res/icons/Data_Screen.png">
    <br />
-   <img align="center" width="500" src="src/res/icons/Analysis_Screen.png">
+   <img align="center" width="650" src="src/res/icons/Analysis_Screen.png">
 </p>
