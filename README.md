@@ -7,6 +7,7 @@ Group #25.
 
 ## Beautiful GUI
 *Because good software isn't just about code. Design matters*
+<br>
    ![Welcome Screen](src/res/icons/Welcome_Screen.png)
    ![Data Screen](src/res/icons/Data_Screen.png)
    ![Analysis Screen](src/res/icons/Analysis_Screen.png) 
