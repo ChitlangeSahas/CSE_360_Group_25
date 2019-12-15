@@ -1,4 +1,4 @@
-# CSE_360_Group_25
+# Grade Analyzer Tool - Group 25
 <br>CSE_360 Grade Analytics Project</br>
 Group #25.
 <br />
